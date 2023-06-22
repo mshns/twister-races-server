@@ -12,14 +12,8 @@ app.use(express.json());
 
 app.use((_, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header(
-    'Access-Control-Allow-Methods',
-    'GET,HEAD,OPTIONS,PATCH,POST,PUT,DELETE'
-  );
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-  );
+  res.header('Access-Control-Allow-Methods', 'GET,PATCH,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
   next();
 });
 
@@ -27,10 +21,6 @@ mongoose
   .connect(process.env.MONGO_DB)
   .then(() => console.log('✅ connected to database'))
   .catch((error) => console.log(`❌ database connection error: ${error}`));
-
-app.options('/*', (_, res) => {
-  res.sendStatus(200);
-});
 
 app.get('/players', (_, res) => {
   Player.find().then((players) => {
