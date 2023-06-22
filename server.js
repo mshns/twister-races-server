@@ -28,6 +28,10 @@ mongoose
   .then(() => console.log('✅ connected to database'))
   .catch((error) => console.log(`❌ database connection error: ${error}`));
 
+app.options('/*', (_, res) => {
+  res.sendStatus(200);
+});
+
 app.get('/players', (_, res) => {
   Player.find().then((players) => {
     res.status(200).json(players);
