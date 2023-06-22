@@ -8,6 +8,8 @@ import Player from './models/player.js';
 
 const app = express();
 
+app.use(express.json());
+
 app.use((_, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE');
@@ -40,7 +42,7 @@ app.delete('/players/:id', (req, res) => {
 app.post('/players', (req, res) => {
   const player = new Player(req.body);
   player.save().then((result) => {
-    res.status(200).json(result);
+    res.status(201).json(result);
   });
 });
 
