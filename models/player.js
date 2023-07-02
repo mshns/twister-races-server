@@ -14,7 +14,6 @@ const playerSchema = new Schema({
     },
     previous: {
       type: String,
-      required: true,
     },
   },
   update: {
