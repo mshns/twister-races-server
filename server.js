@@ -1,15 +1,14 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import got from 'got';
+import { XMLParser } from 'fast-xml-parser';
 
 import 'dotenv/config';
 
 import Player from './models/player.js';
 
 const app = express();
-
 app.use(express.json());
-
 app.use((_, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,PATCH,POST,DELETE');
@@ -53,22 +52,27 @@ app.patch('/players/:id', (req, res) => {
   });
 });
 
+const parser = new XMLParser({
+  attributeNamePrefix: '',
+  ignoreAttributes: false,
+  updateTag(_tagName, _jPath, attrs) {
+    delete attrs['name'];
+    delete attrs['id'];
+  },
+});
+
 app.get('/current', async (_, res) => {
-  try {
-    const response = await got(process.env.CURRENT_LEADERBOARD);
-    res.json(response.body);
-  } catch (error) {
-    console.log(error);
-  }
+  got(process.env.CURRENT_LEADERBOARD).then((response) => {
+    const XMLdata = parser.parse(response.body);
+    return res.json(XMLdata);
+  });
 });
 
 app.get('/previous', async (_, res) => {
-  try {
-    const response = await got(process.env.PREVIOUS_LEADERBOARD);
-    res.json(response.body);
-  } catch (error) {
-    console.log(error);
-  }
+  got(process.env.PREVIOUS_LEADERBOARD).then((response) => {
+    const XMLdata = parser.parse(response.body);
+    return res.json(XMLdata);
+  });
 });
 
 const PORT = process.env.PORT || 5000;
