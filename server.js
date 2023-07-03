@@ -2,6 +2,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import got from 'got';
 import { XMLParser } from 'fast-xml-parser';
+import TelegramBot from 'node-telegram-bot-api';
+import cron from 'node-cron';
 
 import 'dotenv/config';
 
@@ -73,6 +75,92 @@ app.get('/previous', async (_, res) => {
     const XMLdata = parser.parse(response.body);
     return res.json(XMLdata);
   });
+});
+
+const token = process.env.BOT_TOKEN;
+const bot = new TelegramBot(token, { polling: true });
+
+cron.schedule('* 17 * * *', () => {
+  Promise.all([
+    fetch(`${process.env.SERVER_URL}/players`)
+      .then((response) => response.json())
+      .then((players) => {
+        const playerList = [];
+        players.map((player) =>
+          playerList.push(player.nickname.current.toLowerCase())
+        );
+
+        return playerList;
+      }),
+
+    fetch(`${process.env.SERVER_URL}/current`)
+      .then((response) => response.json())
+      .then((playerListXML) => {
+        const networkPlayerList = [],
+          updateRace = playerListXML.report.updated_at;
+
+        playerListXML.report.row.map((row) => {
+          const position = row.column[0],
+            nickname = row.column[1],
+            points = row.column[2];
+
+          if (points > 0) {
+            networkPlayerList.push({
+              position: Number(position),
+              nickname: nickname.toString(),
+              points: Number(points),
+            });
+          }
+        });
+
+        return { updateRace, networkPlayerList };
+      }),
+  ])
+    .then(([playerList, { updateRace, networkPlayerList }]) => {
+      const topList = [];
+      let top10 = '';
+
+      let position = 1;
+
+      networkPlayerList.map((player) => {
+        const isAffiliate = playerList.includes(player.nickname.toLowerCase());
+
+        if (isAffiliate && position < 21) {
+          topList.push({
+            position: position,
+            nickname: player.nickname,
+            points: player.points,
+          });
+          position++;
+        }
+      });
+
+      const options = {
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        },
+        update = new Date(updateRace).toLocaleTimeString('ru-RU', options),
+        reportTitle = `*TOP 20 лидерборда storo08 Twister Races*\n_Обновлено ${update}_\n\n`;
+
+      top10 += reportTitle;
+
+      topList.forEach((player) => {
+        top10 += `${player.position}. *${player.nickname}* - ${player.points}\n`;
+      });
+      return top10;
+    })
+    .then((top10) =>
+      bot.sendMessage(-1001339918641, top10, {
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: 'Лидерборд', url: 'https://storo08.ru/twister-races/' }],
+          ],
+        },
+      })
+    );
 });
 
 const PORT = process.env.PORT || 5000;
