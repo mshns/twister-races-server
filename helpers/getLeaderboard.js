@@ -69,7 +69,8 @@ export const getLeaderboard = (bot) => {
 
       return leaderboard;
     })
-    .then((leaderboard) =>
+    .then((leaderboard) => {
+      console.log('w');
       bot.sendMessage(-1001193009028, leaderboard.join('\n'), {
         parse_mode: 'HTML',
         reply_markup: {
@@ -84,6 +85,6 @@ export const getLeaderboard = (bot) => {
             ],
           ],
         },
-      })
-    );
+      });
+    });
 };
