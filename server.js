@@ -81,7 +81,8 @@ app.get('/previous', async (_, res) => {
 const token = process.env.BOT_TOKEN;
 const bot = new TelegramBot(token, { polling: true });
 
-cron.schedule('*/15 * * * *', () => {
+cron.schedule('* * * * *', () => {
+  console.log('cron working');
   getLeaderboard(bot);
 });
 
