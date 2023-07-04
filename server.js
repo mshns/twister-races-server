@@ -78,7 +78,7 @@ app.get('/previous', async (_, res) => {
 });
 
 const token = process.env.BOT_TOKEN;
-const bot = new TelegramBot(token, { polling: true });
+const bot = new TelegramBot(token, { polling: false });
 
 cron.schedule('* * * * *', () => {
   const leaderboard = [
@@ -91,16 +91,12 @@ cron.schedule('* * * * *', () => {
       players.map((player) =>
         playerList.push(player.nickname.current.toLowerCase())
       );
-      console.log(playerList);
 
       return playerList;
     }),
 
     got(process.env.CURRENT_LEADERBOARD)
-      .then((response) => {
-        const XMLdata = parser.parse(response.body);
-        return XMLdata;
-      })
+      .then((response) => parser.parse(response.body))
       .then((playerListXML) => {
         const networkPlayerList = [],
           updateRace = playerListXML.report.updated_at;
@@ -114,7 +110,7 @@ cron.schedule('* * * * *', () => {
             });
           }
         });
-        console.log(updateRace);
+
         return { updateRace, networkPlayerList };
       }),
   ])
@@ -136,6 +132,7 @@ cron.schedule('* * * * *', () => {
       });
 
       const timeOptions = {
+          timeZone: 'Europe/Moscow',
           month: 'long',
           day: 'numeric',
           hour: '2-digit',
@@ -150,12 +147,10 @@ cron.schedule('* * * * *', () => {
           `${player.position}. <b>${player.nickname}</b> » ${player.points}`
         );
       });
-      console.log(update);
 
       return leaderboard;
     })
     .then((leaderboard) => {
-      console.log(leaderboard);
       bot.sendMessage(-1001193009028, leaderboard.join('\n'), {
         parse_mode: 'HTML',
         reply_markup: {
