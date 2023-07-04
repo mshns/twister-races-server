@@ -80,7 +80,7 @@ app.get('/previous', async (_, res) => {
 const token = process.env.BOT_TOKEN;
 const bot = new TelegramBot(token, { polling: false });
 
-cron.schedule('* * * * *', () => {
+cron.schedule('30 8,13,17,20 * * *', () => {
   const leaderboard = [
     `🏁 <b>Лидерборд</b> <a href="https://storo08.ru/twister-races"><b>storo08 Twister Races</b></a>`,
   ];
@@ -132,14 +132,14 @@ cron.schedule('* * * * *', () => {
       });
 
       const timeOptions = {
-          timeZone: 'Europe/Moscow',
           month: 'long',
           day: 'numeric',
           hour: '2-digit',
           minute: '2-digit',
         },
-        update = new Date(updateRace).toLocaleTimeString('ru-RU', timeOptions);
-
+        updateMSK = new Date(updateRace);
+      updateMSK.setHours(updateMSK.getHours() + 3);
+      const update = new Date(updateMSK).toLocaleTimeString('ru-RU', timeOptions);
       leaderboard.push(`<pre>Обновлено ${update} по мск.</pre>\n`);
 
       topList.map((player) => {
@@ -151,7 +151,7 @@ cron.schedule('* * * * *', () => {
       return leaderboard;
     })
     .then((leaderboard) => {
-      bot.sendMessage(-1001193009028, leaderboard.join('\n'), {
+      bot.sendMessage(-1001339918641, leaderboard.join('\n'), {
         parse_mode: 'HTML',
         reply_markup: {
           inline_keyboard: [
