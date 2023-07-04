@@ -1,4 +1,9 @@
-export const getLeaderboard = (bot) => {
+import TelegramBot from 'node-telegram-bot-api';
+
+const token = process.env.BOT_TOKEN;
+const bot = new TelegramBot(token, { polling: false });
+
+export const getLeaderboard = () => {
   const leaderboard = [
     `🏁 <b>Лидерборд</b> <a href="https://storo08.ru/twister-races"><b>storo08 Twister Races</b></a>`,
   ];

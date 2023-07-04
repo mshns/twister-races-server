@@ -2,7 +2,6 @@ import express from 'express';
 import mongoose from 'mongoose';
 import got from 'got';
 import { XMLParser } from 'fast-xml-parser';
-import TelegramBot from 'node-telegram-bot-api';
 import cron from 'node-cron';
 
 import 'dotenv/config';
@@ -78,11 +77,8 @@ app.get('/previous', async (_, res) => {
   });
 });
 
-const token = process.env.BOT_TOKEN;
-const bot = new TelegramBot(token, { polling: true });
-
 cron.schedule('* * * * *', () => {
-  getLeaderboard(bot);
+  getLeaderboard();
 });
 
 const PORT = process.env.PORT || 5000;
