@@ -1,7 +1,7 @@
 import TelegramBot from 'node-telegram-bot-api';
 
 const token = process.env.BOT_TOKEN;
-const bot = new TelegramBot(token, { polling: false });
+const bot = new TelegramBot(token, { polling: true });
 
 export const getLeaderboard = () => {
   const leaderboard = [
@@ -16,6 +16,7 @@ export const getLeaderboard = () => {
         players.map((player) =>
           playerList.push(player.nickname.current.toLowerCase())
         );
+        console.log(playerList);
 
         return playerList;
       }),
@@ -35,7 +36,7 @@ export const getLeaderboard = () => {
             });
           }
         });
-
+        console.log(updateRace);
         return { updateRace, networkPlayerList };
       }),
   ])
@@ -71,11 +72,12 @@ export const getLeaderboard = () => {
           `${player.position}. <b>${player.nickname}</b> » ${player.points}`
         );
       });
+      console.log(update);
 
       return leaderboard;
     })
     .then((leaderboard) => {
-      console.log('w');
+      console.log(leaderboard);
       bot.sendMessage(-1001193009028, leaderboard.join('\n'), {
         parse_mode: 'HTML',
         reply_markup: {

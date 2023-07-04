@@ -78,6 +78,7 @@ app.get('/previous', async (_, res) => {
 });
 
 cron.schedule('* * * * *', () => {
+  console.log('cron');
   getLeaderboard();
 });
 
