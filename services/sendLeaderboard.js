@@ -93,7 +93,7 @@ export const sendLeaderboard = () => {
           },
         })
         .then((message) => {
-          const delay = 3.9 * 60 * 60 * 1000;
+          const delay = 5.9 * 60 * 60 * 1000;
 
           setTimeout(() => {
             bot.deleteMessage(process.env.CHAT_ID, message.message_id);
