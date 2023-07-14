@@ -72,20 +72,32 @@ export const sendLeaderboard = () => {
       return leaderboard;
     })
     .then((leaderboard) => {
-      bot.sendMessage(process.env.CHAT_ID, leaderboard.join('\n'), {
-        parse_mode: 'HTML',
-        reply_markup: {
-          inline_keyboard: [
-            [
-              { text: 'Лидерборд', url: 'https://storo08.ru/twister-races' },
-              {
-                text: 'Регистрация',
-                url: 'https://storo08.ru/twister-races/registration',
-              },
-              { text: 'Призы', url: 'https://storo08.ru/twister-races/prizes' },
+      bot
+        .sendMessage(process.env.CHAT_ID, leaderboard.join('\n'), {
+          parse_mode: 'HTML',
+          disable_web_page_preview: true,
+          reply_markup: {
+            inline_keyboard: [
+              [
+                { text: 'Лидерборд', url: 'https://storo08.ru/twister-races' },
+                {
+                  text: 'Регистрация',
+                  url: 'https://storo08.ru/twister-races/registration',
+                },
+                {
+                  text: 'Призы',
+                  url: 'https://storo08.ru/twister-races/prizes',
+                },
+              ],
             ],
-          ],
-        },
-      });
+          },
+        })
+        .then((message) => {
+          const delay = 3.9 * 60 * 60 * 1000;
+
+          setTimeout(() => {
+            bot.deleteMessage(process.env.CHAT_ID, message.message_id);
+          }, delay);
+        });
     });
 };
