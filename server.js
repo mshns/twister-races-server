@@ -70,7 +70,7 @@ app.get('/previous', async (_, res) => {
   });
 });
 
-cron.schedule('30 8,13,17,20 * * *', () => {
+cron.schedule('30 8,14,20 * * *', () => {
   sendLeaderboard();
 });
 
