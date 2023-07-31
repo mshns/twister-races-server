@@ -24,7 +24,7 @@ export const sendFreeroll = () => {
             [
               {
                 text: 'Расписание фрироллов и призы',
-                url: 'https://www.vigorish.ru/section84/topic13421-640.html',
+                url: 'https://vigorish.ru/section84/topic13421.html',
               },
             ],
           ],

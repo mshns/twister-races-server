@@ -2,6 +2,10 @@ import express from 'express';
 import mongoose from 'mongoose';
 import got from 'got';
 import cron from 'node-cron';
+import {
+  createProxyMiddleware,
+  responseInterceptor,
+} from 'http-proxy-middleware';
 
 import 'dotenv/config';
 
@@ -77,6 +81,32 @@ cron.schedule('30 8,14,20 * * *', () => {
 cron.schedule('0 17 * * 5', () => {
   sendFreeroll();
 });
+
+app.use(express.static('public'));
+
+app.use(
+  createProxyMiddleware({
+    target: process.env.API_SERVICE_URL,
+    router: {
+      '/api': process.env.API_BACKEND_URL,
+      '/ws': process.env.API_BACKEND_WS,
+    },
+    changeOrigin: true,
+    ws: true,
+    selfHandleResponse: true,
+
+    onProxyRes: responseInterceptor(
+      async (responseBuffer, proxyRes, req, res) => {
+        const response = responseBuffer.toString('utf8');
+        return response
+          .replace(process.env.API_BACKEND_URL, process.env.PROXY_SERVER_URL)
+          .replace(process.env.API_BACKEND_WS, process.env.PROXY_SERVER_WS)
+          .replaceAll(process.env.API_SERVICE_URL, process.env.PROXY_SERVER_URL)
+          .replaceAll(process.env.API_URL, process.env.PROXY_SERVER_URL);
+      }
+    ),
+  })
+);
 
 const PORT = process.env.PORT || 5000;
 
