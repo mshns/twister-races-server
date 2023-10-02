@@ -85,20 +85,6 @@ cron.schedule('0 17 * * 5', () => {
 app.use(express.static('public'));
 
 app.use(
-  createProxyMiddleware(['/api/v1', '/static/dashboard', '/widget'], {
-    target: process.env.DONATIONALERTS,
-    changeOrigin: true,
-    selfHandleResponse: true,
-
-    onProxyRes: responseInterceptor(
-      async (responseBuffer, proxyRes, req, res) => {
-        res.removeHeader('content-security-policy');
-      }
-    ),
-  })
-);
-
-app.use(
   createProxyMiddleware(
     ['/api', '/assets', '/embed', '/favicon', '/static', '/styles', '/ws'],
     {
