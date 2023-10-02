@@ -21,7 +21,7 @@ app.use((_, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,PATCH,POST,DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
-  res.removeHeader('Content-Security-Policy');
+  res.header('Content-Security-Policy', "frame-ancestors 'self' https://storo08.ru");
   next();
 });
 
