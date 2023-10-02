@@ -21,6 +21,7 @@ app.use((_, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,PATCH,POST,DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.removeHeader('Content-Security-Policy');
   next();
 });
 
@@ -86,7 +87,8 @@ app.use(express.static('public'));
 
 app.use(
   createProxyMiddleware(['/api/v1', '/static/dashboard', '/widget'], {
-    target: process.env.DONATIONALERTS, changeOrigin: true,
+    target: process.env.DONATIONALERTS,
+    changeOrigin: true,
   })
 );
 
