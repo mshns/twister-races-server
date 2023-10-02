@@ -21,7 +21,6 @@ app.use((_, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,PATCH,POST,DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
-  res.header('Content-Security-Policy', "frame-ancestors 'self' https://storo08.ru");
   next();
 });
 
@@ -89,6 +88,13 @@ app.use(
   createProxyMiddleware(['/api/v1', '/static/dashboard', '/widget'], {
     target: process.env.DONATIONALERTS,
     changeOrigin: true,
+    selfHandleResponse: true,
+
+    onProxyRes: responseInterceptor(
+      async (responseBuffer, proxyRes, req, res) => {
+        res.removeHeader('content-security-policy');
+      }
+    ),
   })
 );
 
