@@ -74,6 +74,17 @@ app.get('/previous', async (_, res) => {
   });
 });
 
+app.get('/hands', async (req, res) => {
+  console.log(req.query.date);
+  fetch(`${process.env.CHASE}?date=${req.query.date}`, {
+    headers: {
+      'X-Affiliate-Key': process.env.AFFILIATE_KEY,
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => res.json(data));
+});
+
 cron.schedule('30 8,14,20 * * *', () => {
   sendLeaderboard();
 });
