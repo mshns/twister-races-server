@@ -14,7 +14,6 @@ import { parser } from './utils/index.js';
 import { sendLeaderboard, sendFreeroll } from './services/index.js';
 
 const app = express();
-
 app.use(express.json());
 
 app.use((_, res, next) => {
@@ -82,7 +81,8 @@ app.get('/hands', async (req, res) => {
     },
   })
     .then((response) => response.json())
-    .then((data) => res.json(data));
+    .then((data) => res.json(data))
+    .catch(() => console.log(`error ${req.query.date}`));
 });
 
 cron.schedule('30 8,14,20 * * *', () => {
