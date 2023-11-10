@@ -11,7 +11,11 @@ import 'dotenv/config';
 
 import Player from './models/player.js';
 import { parser } from './utils/index.js';
-import { sendLeaderboard, sendFreeroll } from './services/index.js';
+import {
+  downloadChase,
+  sendFreeroll,
+  sendLeaderboard,
+} from './services/index.js';
 
 const app = express();
 app.use(express.json());
@@ -73,16 +77,8 @@ app.get('/previous', async (_, res) => {
   });
 });
 
-app.get('/hands', async (req, res) => {
-  console.log(req.query.date);
-  fetch(`${process.env.CHASE}?date=${req.query.date}`, {
-    headers: {
-      'X-Affiliate-Key': process.env.AFFILIATE_KEY,
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => res.json(data))
-    .catch(() => console.log(`error ${req.query.date}`));
+cron.schedule('*/15 * * * *', () => {
+  downloadChase();
 });
 
 cron.schedule('30 8,14,20 * * *', () => {
