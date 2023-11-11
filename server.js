@@ -77,7 +77,7 @@ app.get('/previous', async (_, res) => {
   });
 });
 
-cron.schedule('*/15 * * * *', () => {
+cron.schedule('*/10 * * * *', () => {
   downloadChase();
 });
 
