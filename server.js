@@ -12,9 +12,9 @@ import 'dotenv/config';
 import { Player, Chase } from './models/index.js';
 import { parser } from './utils/index.js';
 import {
-  downloadChase,
   sendFreeroll,
   sendLeaderboard,
+  updateChase,
 } from './services/index.js';
 
 const app = express();
@@ -77,37 +77,20 @@ app.get('/previous', async (_, res) => {
   });
 });
 
-app.get('/chase', (_, res) => {
-  Chase.find().then((dates) => {
-    res.status(200).json(dates);
+app.get('/chase/:id', (req, res) => {
+  Chase.findById(req.params.id).then((chase) => {
+    res.status(200).json(chase);
   });
 });
 
+app.get('/chase-update/:id', (req, res) => {
+  updateChase(req.params.id);
+  res.json(`chase ${req.params.id} update request submitted`);
+});
+
 cron.schedule('*/10 * * * *', () => {
-  const currentDate = new Date();
-  const date = currentDate.toISOString().slice(0, 10);
-
-  fetch(`${process.env.CHASE}?date=${date}`, {
-    headers: {
-      'X-Affiliate-Key': process.env.AFFILIATE_KEY,
-    },
-  })
-    .then((response) => response.json())
-    .then(async (data) => {
-      const chase = {
-        _id: date,
-        data: data.data,
-        total_count: data.meta.total_count,
-      };
-
-      await Chase.findByIdAndUpdate(date, chase, {
-
-        upsert: true // Make this update into an upsert
-      });
-      // await chaseDoc.save();
-    })
-    .then(() => console.log('updated'))
-    .catch(() => console.log('error'));
+  const date = new Date().toISOString().slice(0, 10);
+  updateChase(date);
 });
 
 cron.schedule('30 8,14,20 * * *', () => {
@@ -120,36 +103,36 @@ cron.schedule('0 17 * * 5', () => {
 
 app.use(express.static('public'));
 
-// app.use(
-//   createProxyMiddleware(
-//     ['/api', '/assets', '/embed', '/favicon', '/static', '/styles', '/ws'],
-//     {
-//       target: process.env.API_SERVICE_URL,
-//       router: {
-//         '/api': process.env.API_BACKEND_URL,
-//         '/ws': process.env.API_BACKEND_WS,
-//       },
-//       changeOrigin: true,
-//       ws: true,
-//       selfHandleResponse: true,
+app.use(
+  createProxyMiddleware(
+    ['/api', '/assets', '/embed', '/favicon', '/static', '/styles', '/ws'],
+    {
+      target: process.env.API_SERVICE_URL,
+      router: {
+        '/api': process.env.API_BACKEND_URL,
+        '/ws': process.env.API_BACKEND_WS,
+      },
+      changeOrigin: true,
+      ws: true,
+      selfHandleResponse: true,
 
-//       onProxyRes: responseInterceptor(
-//         async (responseBuffer, proxyRes, req, res) => {
-//           const response = responseBuffer.toString('utf8');
-//           return response
-//             .replace(process.env.API_BACKEND_URL, process.env.PROXY_SERVER_URL)
-//             .replace(process.env.API_BACKEND_WS, process.env.PROXY_SERVER_WS)
-//             .replaceAll(
-//               process.env.API_SERVICE_URL,
-//               process.env.PROXY_SERVER_URL
-//             )
-//             .replaceAll(process.env.API_URL, process.env.PROXY_SERVER_URL)
-//             .replaceAll('rel="preload', 'rel="prefetch');
-//         }
-//       ),
-//     }
-//   )
-// );
+      onProxyRes: responseInterceptor(
+        async (responseBuffer, proxyRes, req, res) => {
+          const response = responseBuffer.toString('utf8');
+          return response
+            .replace(process.env.API_BACKEND_URL, process.env.PROXY_SERVER_URL)
+            .replace(process.env.API_BACKEND_WS, process.env.PROXY_SERVER_WS)
+            .replaceAll(
+              process.env.API_SERVICE_URL,
+              process.env.PROXY_SERVER_URL
+            )
+            .replaceAll(process.env.API_URL, process.env.PROXY_SERVER_URL)
+            .replaceAll('rel="preload', 'rel="prefetch');
+        }
+      ),
+    }
+  )
+);
 
 const PORT = process.env.PORT || 5000;
 
