@@ -9,12 +9,12 @@ import {
 
 import 'dotenv/config';
 
-import Player from './models/player.js';
+import { Player, Chase } from './models/index.js';
 import { parser } from './utils/index.js';
 import {
-  downloadChase,
   sendFreeroll,
   sendLeaderboard,
+  updateChase,
 } from './services/index.js';
 
 const app = express();
@@ -77,8 +77,20 @@ app.get('/previous', async (_, res) => {
   });
 });
 
+app.get('/chase/:id', (req, res) => {
+  Chase.findById(req.params.id).then((chase) => {
+    res.status(200).json(chase);
+  });
+});
+
+app.get('/chase-update/:id', (req, res) => {
+  updateChase(req.params.id);
+  res.json(`chase ${req.params.id} update request submitted`);
+});
+
 cron.schedule('*/10 * * * *', () => {
-  downloadChase();
+  const date = new Date().toISOString().slice(0, 10);
+  updateChase(date);
 });
 
 cron.schedule('30 8,14,20 * * *', () => {

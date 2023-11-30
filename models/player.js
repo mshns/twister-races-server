@@ -1,6 +1,4 @@
-import mongoose from 'mongoose';
-
-const Schema = mongoose.Schema;
+import mongoose, { Schema } from 'mongoose';
 
 const playerSchema = new Schema({
   login: {
@@ -22,6 +20,7 @@ const playerSchema = new Schema({
   },
 });
 
-const Player = mongoose.model('Player', playerSchema);
+const twisterRacesDB = mongoose.connection.useDb('twister-races');
+const Player = twisterRacesDB.model('Player', playerSchema, 'players');
 
 export default Player;
