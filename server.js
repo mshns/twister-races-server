@@ -93,6 +93,13 @@ cron.schedule('*/10 * * * *', () => {
   updateChase(date);
 });
 
+cron.schedule('55 11 * * *', () => {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const date = yesterday.toISOString().slice(0, 10);
+  updateChase(date);
+});
+
 cron.schedule('30 8,14,20 * * *', () => {
   sendLeaderboard();
 });
