@@ -9,13 +9,13 @@ import {
 
 import 'dotenv/config';
 
-import { Player, Chase } from './models/index.js';
-import { parser } from './utils/index.js';
+import { Player, Chase } from './src/models/index.js';
+import { parser } from './src/utils/index.js';
 import {
   sendFreeroll,
   sendLeaderboard,
   updateChase,
-} from './services/index.js';
+} from './src/services/index.js';
 
 const app = express();
 app.use(express.json());
