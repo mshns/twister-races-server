@@ -24,7 +24,7 @@
     "fast-xml-parser": "^4.2.5",
     "got": "^13.0.0",
     "http-proxy-middleware": "^2.0.6",
-    "mongodb": "^5.5.0",
+    "mongodb": "^5.8.0",
     "mongoose": "^7.2.2",
     "node-cron": "^3.0.2",
     "node-telegram-bot-api": "^0.61.0"
