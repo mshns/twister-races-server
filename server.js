@@ -1,6 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import got from 'got';
+
 import cron from 'node-cron';
 import {
   createProxyMiddleware,
@@ -10,12 +10,14 @@ import {
 import 'dotenv/config';
 
 import { Player, Chase } from './src/models/index.js';
-import { parser } from './src/utils/index.js';
+
 import {
   sendFreeroll,
   sendLeaderboard,
   updateChase,
 } from './src/services/index.js';
+
+import twisterRacesRoutes from './src/routes/twisterRacesRoutes.js';
 
 const app = express();
 app.use(express.json());
@@ -32,50 +34,7 @@ mongoose
   .then(() => console.log('✅ connected to database'))
   .catch((error) => console.log(`❌ database connection error: ${error}`));
 
-app.get('/players', (_, res) => {
-  Player.find().then((players) => {
-    res.status(200).json(players);
-  });
-});
-
-app.get('/players/:id', (req, res) => {
-  Player.findById(req.params.id).then((player) => {
-    res.status(200).json(player);
-  });
-});
-
-app.delete('/players/:id', (req, res) => {
-  Player.findByIdAndDelete(req.params.id).then((result) => {
-    res.status(200).json(result);
-  });
-});
-
-app.post('/players', (req, res) => {
-  const player = new Player(req.body);
-  player.save().then((result) => {
-    res.status(201).json(result);
-  });
-});
-
-app.patch('/players/:id', (req, res) => {
-  Player.findByIdAndUpdate(req.params.id, req.body).then((result) => {
-    res.status(200).json(result);
-  });
-});
-
-app.get('/current', async (_, res) => {
-  got(process.env.CURRENT_LEADERBOARD).then((response) => {
-    const XMLdata = parser.parse(response.body);
-    return res.json(XMLdata);
-  });
-});
-
-app.get('/previous', async (_, res) => {
-  got(process.env.PREVIOUS_LEADERBOARD).then((response) => {
-    const XMLdata = parser.parse(response.body);
-    return res.json(XMLdata);
-  });
-});
+app.use('/', twisterRacesRoutes);
 
 app.get('/chase/:id', (req, res) => {
   Chase.findById(req.params.id).then((chase) => {
