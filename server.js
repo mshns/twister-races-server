@@ -1,23 +1,22 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import got from 'got';
 import cron from 'node-cron';
-import {
-  createProxyMiddleware,
-  responseInterceptor,
-} from 'http-proxy-middleware';
 
 import 'dotenv/config';
 
-import { Player, Chase } from './models/index.js';
-import { parser } from './utils/index.js';
 import {
   sendFreeroll,
   sendLeaderboard,
   updateChase,
-} from './services/index.js';
+} from './src/services/index.js';
+
+import twisterRacesRoutes from './src/routes/twisterRacesRoutes.js';
+import raceChaseRoutes from './src/routes/raceChaseRoutes.js';
+
+import proxyMiddleware from './src/utils/proxyConfig.js';
 
 const app = express();
+
 app.use(express.json());
 
 app.use((_, res, next) => {
@@ -27,69 +26,23 @@ app.use((_, res, next) => {
   next();
 });
 
+app.use('/', twisterRacesRoutes);
+app.use('/', raceChaseRoutes);
+
 mongoose
   .connect(process.env.MONGO_DB)
   .then(() => console.log('✅ connected to database'))
   .catch((error) => console.log(`❌ database connection error: ${error}`));
 
-app.get('/players', (_, res) => {
-  Player.find().then((players) => {
-    res.status(200).json(players);
-  });
-});
-
-app.get('/players/:id', (req, res) => {
-  Player.findById(req.params.id).then((player) => {
-    res.status(200).json(player);
-  });
-});
-
-app.delete('/players/:id', (req, res) => {
-  Player.findByIdAndDelete(req.params.id).then((result) => {
-    res.status(200).json(result);
-  });
-});
-
-app.post('/players', (req, res) => {
-  const player = new Player(req.body);
-  player.save().then((result) => {
-    res.status(201).json(result);
-  });
-});
-
-app.patch('/players/:id', (req, res) => {
-  Player.findByIdAndUpdate(req.params.id, req.body).then((result) => {
-    res.status(200).json(result);
-  });
-});
-
-app.get('/current', async (_, res) => {
-  got(process.env.CURRENT_LEADERBOARD).then((response) => {
-    const XMLdata = parser.parse(response.body);
-    return res.json(XMLdata);
-  });
-});
-
-app.get('/previous', async (_, res) => {
-  got(process.env.PREVIOUS_LEADERBOARD).then((response) => {
-    const XMLdata = parser.parse(response.body);
-    return res.json(XMLdata);
-  });
-});
-
-app.get('/chase/:id', (req, res) => {
-  Chase.findById(req.params.id).then((chase) => {
-    res.status(200).json(chase);
-  });
-});
-
-app.get('/chase-update/:id', (req, res) => {
-  updateChase(req.params.id);
-  res.json(`chase ${req.params.id} update request submitted`);
-});
-
 cron.schedule('*/10 * * * *', () => {
   const date = new Date().toISOString().slice(0, 10);
+  updateChase(date);
+});
+
+cron.schedule('55 11 * * *', () => {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const date = yesterday.toISOString().slice(0, 10);
   updateChase(date);
 });
 
@@ -103,36 +56,7 @@ cron.schedule('0 17 * * 5', () => {
 
 app.use(express.static('public'));
 
-app.use(
-  createProxyMiddleware(
-    ['/api', '/assets', '/embed', '/favicon', '/static', '/styles', '/ws'],
-    {
-      target: process.env.API_SERVICE_URL,
-      router: {
-        '/api': process.env.API_BACKEND_URL,
-        '/ws': process.env.API_BACKEND_WS,
-      },
-      changeOrigin: true,
-      ws: true,
-      selfHandleResponse: true,
-
-      onProxyRes: responseInterceptor(
-        async (responseBuffer, proxyRes, req, res) => {
-          const response = responseBuffer.toString('utf8');
-          return response
-            .replace(process.env.API_BACKEND_URL, process.env.PROXY_SERVER_URL)
-            .replace(process.env.API_BACKEND_WS, process.env.PROXY_SERVER_WS)
-            .replaceAll(
-              process.env.API_SERVICE_URL,
-              process.env.PROXY_SERVER_URL
-            )
-            .replaceAll(process.env.API_URL, process.env.PROXY_SERVER_URL)
-            .replaceAll('rel="preload', 'rel="prefetch');
-        }
-      ),
-    }
-  )
-);
+app.use(proxyMiddleware);
 
 const PORT = process.env.PORT || 5000;
 
