@@ -1,5 +1,4 @@
 import express from 'express';
-import got from 'got';
 
 import { Player } from '../models/index.js';
 import { parser } from '../utils/index.js';
@@ -38,17 +37,21 @@ router.patch('/players/:id', (req, res) => {
 });
 
 router.get('/current', async (_, res) => {
-  got(process.env.CURRENT_LEADERBOARD).then((response) => {
-    const XMLdata = parser.parse(response.body);
-    return res.json(XMLdata);
-  });
+  fetch(process.env.CURRENT_LEADERBOARD)
+    .then((response) => response.text())
+    .then((data) => {
+      const XMLdata = parser.parse(data);
+      return res.json(XMLdata);
+    });
 });
 
 router.get('/previous', async (_, res) => {
-  got(process.env.PREVIOUS_LEADERBOARD).then((response) => {
-    const XMLdata = parser.parse(response.body);
-    return res.json(XMLdata);
-  });
+  fetch(process.env.PREVIOUS_LEADERBOARD)
+    .then((response) => response.text())
+    .then((data) => {
+      const XMLdata = parser.parse(data);
+      return res.json(XMLdata);
+    });
 });
 
 export default router;
