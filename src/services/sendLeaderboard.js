@@ -1,5 +1,3 @@
-import got from 'got';
-
 import Player from '../models/player.js';
 import { bot, parser } from '../utils/index.js';
 
@@ -18,8 +16,9 @@ export const sendLeaderboard = () => {
       return playerList;
     }),
 
-    got(process.env.CURRENT_LEADERBOARD)
-      .then((response) => parser.parse(response.body))
+    fetch(process.env.CURRENT_LEADERBOARD)
+      .then((response) => response.text())
+      .then((data) => parser.parse(data))
       .then((playerListXML) => {
         const networkPlayerList = [],
           updateRace = playerListXML.report.updated_at;
@@ -61,7 +60,7 @@ export const sendLeaderboard = () => {
       updateMSK.setHours(updateMSK.getHours() + 3);
       const date = new Date(updateMSK).toLocaleString('ru', dateOptions),
         time = new Date(updateMSK).toLocaleString('ru', timeOptions);
-      leaderboard.push(`<pre>Обновлено ${date} в ${time} по мск.</pre>\n`);
+      leaderboard.push(`<i>Обновлено ${date} в ${time} по мск.</i>\n`);
 
       topList.map((player) => {
         leaderboard.push(
