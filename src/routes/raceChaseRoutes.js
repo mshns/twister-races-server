@@ -1,6 +1,7 @@
 import express from 'express';
 
 import { Chase } from '../models/index.js';
+import { updateChase } from '../services/index.js';
 
 const router = express.Router();
 
