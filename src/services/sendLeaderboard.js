@@ -61,7 +61,7 @@ export const sendLeaderboard = () => {
       updateMSK.setHours(updateMSK.getHours() + 3);
       const date = new Date(updateMSK).toLocaleString('ru', dateOptions),
         time = new Date(updateMSK).toLocaleString('ru', timeOptions);
-      leaderboard.push(`<pre>Обновлено ${date} в ${time} по мск.</pre>\n`);
+      leaderboard.push(`<i>Обновлено ${date} в ${time} по мск.</i>\n`);
 
       topList.map((player) => {
         leaderboard.push(
