@@ -21,9 +21,15 @@ const proxyMiddleware = createProxyMiddleware(
         return response
           .replace(process.env.API_BACKEND_URL, process.env.PROXY_SERVER_URL)
           .replace(process.env.API_BACKEND_WS, process.env.PROXY_SERVER_WS)
-          .replaceAll(process.env.API_SERVICE_URL, process.env.PROXY_SERVER_URL)
-          .replaceAll(process.env.API_URL, process.env.PROXY_SERVER_URL)
-          .replaceAll('rel="preload', 'rel="prefetch');
+          .replace(
+            new RegExp(process.env.API_SERVICE_URL, 'g'),
+            process.env.PROXY_SERVER_URL
+          )
+          .replace(
+            new RegExp(process.env.API_URL, 'g'),
+            process.env.PROXY_SERVER_URL
+          )
+          .replace(/rel="preload/g, 'rel="prefetch');
       }
     ),
   }
