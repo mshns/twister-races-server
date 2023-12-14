@@ -1,11 +1,10 @@
 import express from 'express';
-import mongoose from 'mongoose';
 
 import 'dotenv/config';
 
 import { twisterRacesRoutes, raceChaseRoutes } from './src/routes/index.js';
 import { cronJobs } from './src/services/index.js';
-import { noCORS, proxyConfig } from './src/utils/index.js';
+import { connectDatabase, noCORS, proxyConfig } from './src/utils/index.js';
 
 const app = express();
 
@@ -22,10 +21,7 @@ app.use(proxyConfig);
 
 cronJobs();
 
-mongoose
-  .connect(process.env.MONGO_DB)
-  .then(() => console.log('✅ connected to database'))
-  .catch((error) => console.log(`❌ database connection error: ${error}`));
+connectDatabase();
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, (error) => {
