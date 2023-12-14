@@ -3,87 +3,114 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Orbitron&family=Roboto:wght@300;400;700&display=swap"
       rel="stylesheet"
     />
-
     <title>Twister Races Server</title>
-
     <style>
       body {
         font-family: 'Orbitron', sans-serif;
       }
     </style>
   </head>
-
   <body>
-    <h1>Twister Races Server</h1>
+    <header>
+      <h1>Twister Races Server</h1>
+      <p>Server for storo08 'twister races' and 'race chase' projects</p>
+      <hr />
+    </header>
+    <main>
+      <section>
+        <h2>Twister Races Data</h2>
+        <ul>
+          <li>
+            Twister races player list
+            <ul>
+              <li>
+                <a href="./players" target="_blank">/players</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            Twister races current week
+            <ul>
+              <li>
+                <a href="./current" target="_blank">/current</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            Twister races previous week
+            <ul>
+              <li>
+                <a href="./previous" target="_blank">/previous</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+      <hr />
+      <section>
+        <h2>Race Chase Reports</h2>
+        <ul>
+          <li>
+            Race chase report
+            <ul>
+              <li>
+                <a href="./chase/2023-12-01" target="_blank" id="chase-report"
+                  >/chase/2023-12-01</a
+                >
+              </li>
+            </ul>
+          </li>
+          <li>
+            Race chase update report
+            <ul>
+              <li>
+                <a
+                  href="./chase-update/2023-12-01"
+                  target="_blank"
+                  id="chase-update"
+                  >/chase-update/2023-12-01</a
+                >
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+      <hr />
+      <section>
+        <h2>Restream Chat Proxy</h2>
+        <ul>
+          <li>
+            Restream chat proxy
+            <ul>
+              <li>
+                <a
+                  href="./embed?token=c78947a2-6ada-4646-9eca-7027509ace1b"
+                  target="_blank"
+                  >/embed?token=</a
+                >
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+    </main>
+    <script>
+      const chaseReport = document.getElementById('chase-report');
+      const chaseUpdate = document.getElementById('chase-update');
 
-    <p>Server for storo08 'twister races' and 'race chase' projects</p>
+      const date = new Date().toISOString().slice(0, 10);
 
-    <hr />
+      chaseReport.innerHTML = `/chase/${date}`;
+      chaseReport.setAttribute('href', `./chase/${date}`);
 
-    <h2>Twister Races Data</h2>
-
-    <ul>
-      <li>
-        Twister races player list
-        <a href="https://twister-races.onrender.com/players" target="_blank"
-          >https://twister-races.onrender.com/players</a
-        >
-      </li>
-      <li>
-        Twister races current week
-        <a href="https://twister-races.onrender.com/current" target="_blank"
-          >https://twister-races.onrender.com/current</a
-        >
-      </li>
-      <li>
-        Twister races previous week
-        <a href="https://twister-races.onrender.com/previous" target="_blank"
-          >https://twister-races.onrender.com/previous</a
-        >
-      </li>
-    </ul>
-
-    <hr />
-
-    <h2>Race Chase Reports</h2>
-
-    <ul>
-      <li>
-        Race chase report
-        <a
-          href="https://twister-races.onrender.com/chase/2023-12-01"
-          target="_blank"
-          >https://twister-races.onrender.com/chase/2023-12-01</a
-        >
-      </li>
-      <li>
-        Race chase update report
-        <a
-          href="https://twister-races.onrender.com/chase-update/2023-12-01"
-          target="_blank"
-          >https://twister-races.onrender.com/chase-update/2023-12-01</a
-        >
-      </li>
-    </ul>
-
-    <hr />
-
-    <h2>Restream Chat Proxy</h2>
-
-    <p>
-      Restream chat proxy
-      <a
-        href="https://twister-races.onrender.com/embed?token=c78947a2-6ada-4646-9eca-7027509ace1b"
-        target="_blank"
-        >https://twister-races.onrender.com/embed?token=c78947a2-6ada-4646-9eca-7027509ace1b</a
-      >
-    </p>
+      chaseUpdate.innerHTML = `/chase-update/${date}`;
+      chaseUpdate.setAttribute('href', `./chase-update/${date}`);
+    </script>
   </body>
 </html>
