@@ -1,4 +1,5 @@
 import express from 'express';
+
 import 'dotenv/config';
 
 import { twisterRacesRoutes, raceChaseRoutes } from './src/routes/index.js';
