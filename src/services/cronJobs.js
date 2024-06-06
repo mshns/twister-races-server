@@ -7,8 +7,8 @@ import {
 } from './index.js';
 
 const cronJobs = () => {
-  // Run every 10 minutes
-  cron.schedule('*/10 * * * *', () => {
+  // Run every 30 minutes
+  cron.schedule('*/30 * * * *', () => {
     const date = new Date().toISOString().slice(0, 10);
     updateChase(date);
   });
