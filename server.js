@@ -18,9 +18,9 @@ app.use(express.static('public'));
 
 app.use(proxyConfig);
 
-cronJobs();
+// cronJobs();
 
-connectDatabase();
+// connectDatabase();
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, (error) => {
