@@ -2,8 +2,8 @@ import express from 'express';
 import 'dotenv/config';
 
 import { twisterRacesRoutes, raceChaseRoutes } from './src/routes/index.js';
-import { cronJobs } from './src/services/index.js';
-import { connectDatabase, noCORS, proxyConfig } from './src/utils/index.js';
+// import { cronJobs } from './src/services/index.js';
+import { /*connectDatabase, */noCORS, proxyConfig } from './src/utils/index.js';
 
 const app = express();
 
@@ -11,8 +11,8 @@ app.use(express.json());
 
 app.use(noCORS);
 
-app.use('/', twisterRacesRoutes);
-app.use('/', raceChaseRoutes);
+// app.use('/', twisterRacesRoutes);
+// app.use('/', raceChaseRoutes);
 
 app.use(express.static('public'));
 
