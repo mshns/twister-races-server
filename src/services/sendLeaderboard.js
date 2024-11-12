@@ -43,7 +43,7 @@ export const sendLeaderboard = () => {
       networkPlayerList.map((player) => {
         const isAffiliate = playerList.includes(player.nickname.toLowerCase());
 
-        if (isAffiliate && position < 56) {
+        if (isAffiliate && position < 66) {
           topList.push({
             position: position,
             nickname: player.nickname,
