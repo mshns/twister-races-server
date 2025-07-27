@@ -21,10 +21,10 @@ const cronJobs = () => {
     updateChase(date);
   });
 
-  // Run at 8:30 AM, 2:30 PM, and 8:30 PM every day
-  cron.schedule('30 8,14,20 * * *', () => {
-    sendLeaderboard();
-  });
+  // // Run at 8:30 AM, 2:30 PM, and 8:30 PM every day
+  // cron.schedule('30 8,14,20 * * *', () => {
+  //   sendLeaderboard();
+  // });
 
   // Run at 5:00 PM on Fridays
   cron.schedule('0 17 * * 5', () => {
